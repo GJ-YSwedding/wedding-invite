@@ -604,19 +604,31 @@
       // 설정된 리스트 가져오기
       const galleryPhotos = DATA_CONFIG.galleryImages;
 
-      // 로딩 페이지용 사진 초기 생성 & 에러 핸들링
-      galleryPhotos.forEach((item) => {
-        const div = document.createElement('div');
-        div.className = 'photo';
-        div.id = `loading_photo_${item.id.split('.')[0]}`; 
-        
-        // 이미지 경로 설정
-        const imgUrl = `assets/images/gallery/${item.id}.jpg`;
-        
-        // 배경 이미지 설정
-        div.style.backgroundImage = `url(${imgUrl})`;
-        
-        photoStack.appendChild(div);
+      // [로딩 페이지 기능 수정]
+      // 1. 연도별로 사진 그룹화
+      const photosByYear = {};
+      galleryPhotos.forEach(item => {
+        const year = parseInt(item.id.split('.')[0]);
+        if (!photosByYear[year]) photosByYear[year] = [];
+        photosByYear[year].push(item);
+      });
+
+      // 2. 2015년부터 2년 단위(2015, 2017, ...)로 사진을 하나씩 랜덤 선택하여 생성
+      const targetYears = [2015, 2017, 2019, 2021, 2023, 2025];
+      
+      targetYears.forEach(year => {
+        const pool = photosByYear[year];
+        if (pool && pool.length > 0) {
+          // 해당 연도 사진들 중 랜덤 하나 선택
+          const randomPick = pool[Math.floor(Math.random() * pool.length)];
+          
+          const div = document.createElement('div');
+          div.className = 'photo';
+          // ID를 loading_photo_2015 등 연도 기반으로 설정하여 로딩 루프에서 찾을 수 있게 함
+          div.id = `loading_photo_${year}`;
+          div.style.backgroundImage = `url(assets/images/gallery/${randomPick.id}.jpg)`;
+          photoStack.appendChild(div);
+        }
       });
 
       function updatePageStacking() {
@@ -642,7 +654,7 @@
       window.addEventListener("mousemove", (e) => {
         const x = e.clientX, y = e.clientY;
         const centerX = window.innerWidth / 2, centerY = window.innerHeight / 2;
-        const rotX = -((y - centerY) / centerY) * 12, rotY = ((x - centerX) / centerX) * 12;
+        const rotX = -((y - centerY) / centerY) * 20, rotY = ((x - centerX) / centerX) * 20;
         book.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
       });
 
