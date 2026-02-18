@@ -649,9 +649,9 @@
       if (window.DeviceOrientationEvent) {
         window.addEventListener("deviceorientation", (e) => {
           if (e.beta !== null && e.gamma !== null) {
-            let rotX = (e.beta - 45) / 2.5, rotY = e.gamma / 2.5;
-            rotX = Math.max(-12, Math.min(12, rotX));
-            rotY = Math.max(-12, Math.min(12, rotY));
+            let rotX = (e.beta - 45) / 1.5, rotY = e.gamma / 1.5;
+            rotX = Math.max(-20, Math.min(20, rotX));
+            rotY = Math.max(-20, Math.min(20, rotY));
             book.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
           }
         });
