@@ -213,7 +213,7 @@
           setTimeout(() => { if (currentPage === 1) goNext(); }, 1500);
         }
       }
-      requestAnimationFrame(loadingLoop);
+
 
       function goNext() { 
         if (currentPage < pages.length) { 
@@ -288,6 +288,49 @@
           }
         }, 50);
       };
+      
+      // =========================================
+      // [추가] 시네마틱 애니메이션 시퀀스 (최종)
+      // =========================================
+      const envWrap = document.getElementById('envelopeWrap');
+      const bookContainerElem = document.getElementById('bookContainer');
+      const bgTextElem = document.getElementById('bgText');
+
+      // 1. 시작하자마자 배경 문구가 스르륵 나타남
+      setTimeout(() => {
+        if(bgTextElem) bgTextElem.classList.add('show');
+      }, 100);
+
+      // 2. 문구가 완성될 즈음(1.2초 뒤), 봉투와 청첩장이 함께 위로 올라옴
+      setTimeout(() => {
+        if(envWrap) envWrap.classList.add('rise');
+        if(bookContainerElem) bookContainerElem.classList.add('rise');
+      }, 1200);
+
+      // 3. 봉투가 다 올라오면(1.2초 소요) 거의 바로(0.2초 대기) 떨어짐
+      setTimeout(() => {
+        if(bgTextElem) {
+          bgTextElem.classList.remove('show');
+          bgTextElem.classList.add('fade-out');
+        }
+        if(envWrap) {
+          envWrap.classList.remove('rise');
+          envWrap.classList.add('drop');
+        }
+        
+        // 봉투가 화면 밖으로 충분히 빠져나갔을 즈음 (0.6초 뒤) 팜플렛 확대 시작
+        setTimeout(() => {
+          if(bookContainerElem) bookContainerElem.classList.add('grow');
+          
+          // 팜플렛 원래 크기(100%)로 확대 완료 후 (0.8초 뒤) 로딩 실행 (아까 지웠던 코드가 여기서 실행됩니다!)
+          setTimeout(() => {
+            requestAnimationFrame(loadingLoop); 
+            const envScreen = document.getElementById('envelope-screen');
+            if(envScreen) envScreen.style.display = 'none';
+          }, 800); 
+          
+        }, 600);
+      }, 2600);
 
       updatePageStacking();
     })();
