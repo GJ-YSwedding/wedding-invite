@@ -8,8 +8,7 @@
   <meta property="og:title" content="이관준 & 이영서 결혼합니다" />
   <meta property="og:description" content="2026. 04. 19 (일) 오후 3시" />
   
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600&family=Noto+Sans+KR:wght@300;400;500&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500&family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 
 </head>
 <body>
@@ -41,25 +40,37 @@
       
       <!-- PAGE 1: Cover -->
       <div class="page" id="page1">
-        <div class="page-front">
-          <div class="book-content center-align">
-            <div class="cover-top">
-              <div class="serif-title">10 Years Together</div>
-              <div class="serif-sub">우리의 소중한 기록들을 불러옵니다</div>
+<div class="page-front">
+          <div class="center-align" style="display:flex; flex-direction:column; height: 100%;">
+            
+            <!-- [사진 및 상단 텍스트 영역] -->
+            <div class="cover-frame">
+              <div class="photo-overlay"></div>
+              <div class="cover-top">
+                <div class="season-title" id="seasonTitle" style="opacity: 0;">10번의 봄</div>
+              </div>
+              <div class="photo-stack" id="photoStack"></div>
             </div>
-            <div class="cover-frame"><div class="photo-stack" id="photoStack"></div></div>
-            <div class="loading-bar-area"><div class="bar-bg"><div id="barFill" class="bar-fill"></div></div></div>
+            
+            <!-- [로딩 바 영역] -->
+            <div class="loading-bar-area">
+              <div class="bar-bg"><div id="barFill" class="bar-fill"></div></div>
+            </div>
+            
+            <!-- [연도 카운터 영역] -->
             <div class="counter-wrap" id="yearCounter">
               <div class="digit-box"><div class="digit-top">2</div><div class="digit-bot"><span>2</span></div></div>
               <div class="digit-box"><div class="digit-top">0</div><div class="digit-bot"><span>0</span></div></div>
-              <div class="digit-box"><div class="digit-top">2</div><div class="digit-bot"><span>2</span></div></div>
+              <div class="digit-box"><div class="digit-top">1</div><div class="digit-bot"><span>1</span></div></div>
               <div class="digit-box"><div class="digit-top">6</div><div class="digit-bot"><span>6</span></div></div>
             </div>
+            
+            <!-- [피날레 문구 영역] -->
             <div class="cover-bottom" id="finalCopy">
-              <p>그리고 오늘,</p>
+              <p>10번의 사계절을 지나,</p>
               <h3>결혼합니다</h3>
             </div>
-            <div class="hint-text">잠시 후 청첩장이 열립니다</div>
+            
           </div>
         </div>
         <div class="page-back">

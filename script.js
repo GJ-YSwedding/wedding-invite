@@ -1,5 +1,4 @@
-
-    (function() {
+(function() {
       // ==========================================================
       // [사용자 설정 영역] 
       // 깃허브나 서버에 업로드할 때, 실제 가지고 계신 사진 파일명 목록을
@@ -118,32 +117,28 @@
       // 설정된 리스트 가져오기
       const galleryPhotos = DATA_CONFIG.galleryImages;
 
-      // [로딩 페이지 기능 수정]
-      // 1. 연도별로 사진 그룹화
-      const photosByYear = {};
-      galleryPhotos.forEach(item => {
-        const year = parseInt(item.id.split('.')[0]);
-        if (!photosByYear[year]) photosByYear[year] = [];
-        photosByYear[year].push(item);
-      });
+      // ==========================================================
+      // [추가된 부분] 4계절 로딩을 위한 설정 및 사진 DOM 삽입
+      // ==========================================================
+      const SEASON_DATA = [
+        { text: "10번의 봄", img: "assets/images/Loading/spring.jpg" },
+        { text: "10번의 여름", img: "assets/images/Loading/summer.jpg" },
+        { text: "10번의 가을", img: "assets/images/Loading/fall.jpg" },
+        { text: "10번의 겨울", img: "assets/images/Loading/winter.jpg" }
+      ];
 
-      // 2. 2015년부터 2년 단위(2015, 2017, ...)로 사진을 하나씩 랜덤 선택하여 생성
-      const targetYears = [2015, 2017, 2019, 2021, 2023, 2025];
-      
-      targetYears.forEach(year => {
-        const pool = photosByYear[year];
-        if (pool && pool.length > 0) {
-          // 해당 연도 사진들 중 랜덤 하나 선택
-          const randomPick = pool[Math.floor(Math.random() * pool.length)];
-          
-          const div = document.createElement('div');
-          div.className = 'photo';
-          // ID를 loading_photo_2015 등 연도 기반으로 설정하여 로딩 루프에서 찾을 수 있게 함
-          div.id = `loading_photo_${year}`;
-          div.style.backgroundImage = `url(assets/images/gallery/${randomPick.id}.jpg)`;
-          photoStack.appendChild(div);
-        }
+      const seasonTitle = document.getElementById("seasonTitle");
+      let currentSeasonIndex = -1; // 현재 활성화된 계절 인덱스 트래킹용
+
+      // 4계절 사진 미리 DOM에 생성 및 삽입 (이게 있어야 화면에 사진이 뜹니다!)
+      SEASON_DATA.forEach((season, index) => {
+        const div = document.createElement('div');
+        div.className = 'photo';
+        div.id = `season_photo_${index}`;
+        div.style.backgroundImage = `url('${season.img}')`;
+        photoStack.appendChild(div);
       });
+      // ==========================================================
 
       function updatePageStacking() {
         pages.forEach((page, index) => {
@@ -184,15 +179,36 @@
       }
 
       let startTime = null;
+
       function loadingLoop(ts) {
         if (!startTime) startTime = ts;
         const progress = Math.min(1, (ts - startTime) / 5000); 
+        
         if (barFill) barFill.style.width = (progress * 100) + "%";
         
-        const currentYear = 2015 + Math.round(progress * 11);
-        const photo = document.getElementById(`loading_photo_${currentYear}`);
-        if (photo) photo.classList.add('is-in');
+        const newSeasonIndex = Math.min(3, Math.floor(progress * 4));
 
+        if (newSeasonIndex !== currentSeasonIndex) {
+          const isFirstLoad = currentSeasonIndex === -1;
+          currentSeasonIndex = newSeasonIndex;
+          
+          const photo = document.getElementById(`season_photo_${newSeasonIndex}`);
+          if (photo) photo.classList.add('is-in');
+
+          if (seasonTitle) {
+            if (isFirstLoad) {
+              seasonTitle.style.opacity = "1";
+            } else {
+              seasonTitle.style.opacity = "0";
+              setTimeout(() => {
+                seasonTitle.textContent = SEASON_DATA[newSeasonIndex].text;
+                seasonTitle.style.opacity = "1";
+              }, 400);
+            }
+          }
+        }
+
+        const currentYear = 2016 + Math.round(progress * 10);
         if (yearCounter) {
           const boxes = yearCounter.querySelectorAll(".digit-box");
           const nextS = String(currentYear);
@@ -207,9 +223,11 @@
           });
         }
 
-        if (progress < 1) requestAnimationFrame(loadingLoop);
-        else {
+        if (progress < 1) {
+          requestAnimationFrame(loadingLoop);
+        } else {
           if (finalCopy) finalCopy.classList.add("is-on");
+          // 로딩이 끝나면 기존처럼 1.5초 뒤에 자동으로 다음 페이지로 넘김
           setTimeout(() => { if (currentPage === 1) goNext(); }, 1500);
         }
       }
@@ -322,9 +340,15 @@
         setTimeout(() => {
           if(bookContainerElem) bookContainerElem.classList.add('grow');
           
-          // 팜플렛 원래 크기(100%)로 확대 완료 후 (0.8초 뒤) 로딩 실행 (아까 지웠던 코드가 여기서 실행됩니다!)
+          // 팜플렛 원래 크기(100%)로 확대 완료 후 (0.8초 뒤) 로딩 실행
           setTimeout(() => {
-            requestAnimationFrame(loadingLoop); 
+            // 폰트가 완전히 로드된 후 실행되도록 깜빡임 방지 적용
+            document.fonts.ready.then(() => {
+              setTimeout(() => {
+                requestAnimationFrame(loadingLoop); 
+              }, 50);
+            });
+            
             const envScreen = document.getElementById('envelope-screen');
             if(envScreen) envScreen.style.display = 'none';
           }, 800); 
@@ -334,4 +358,3 @@
 
       updatePageStacking();
     })();
-  
