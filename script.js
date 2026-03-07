@@ -13,7 +13,6 @@
           { id: "2015.11", text: "첫 만남, 첫 데이트" },
           { id: "2015.12", text: "부처님께 오래 가도록 기원" },
           { id: "2016.01", text: "첫 여행은 전주!" },
-          { id: "2016.05", text: "뭘 봐" },
           { id: "2016.06", text: "꽃 선물 최고" },
           { id: "2016.07", text: "하늘 공원 최고시다" },
           { id: "2016.12", text: "파도가 엄청 났던 속초" },
@@ -95,7 +94,6 @@
           { id: "2025.09", text: "3가족 거실에서 평화롭게 낮잠 중" },
           { id: "2025.11", text: "스플렌더 중독의 시작" },
           { id: "2025.12", text: "첫 집에서 본 첫 눈의 흔적" },
-          { id: "2026.02", text: "부부가 될 장소, 맛은 꽤 괜찮아요" }
         ]
       };
       
@@ -127,8 +125,8 @@
         { text: "10번의 겨울", img: "assets/images/Loading/winter.jpg" }
       ];
 
-      const seasonTitle = document.getElementById("seasonTitle");
-      let currentSeasonIndex = -1; // 현재 활성화된 계절 인덱스 트래킹용
+        const seasonDynamic = document.getElementById("seasonDynamic");
+        let currentSeasonIndex = -1; // 현재 활성화된 계절 인덱스 트래킹용
 
       // 4계절 사진 미리 DOM에 생성 및 삽입 (이게 있어야 화면에 사진이 뜹니다!)
       SEASON_DATA.forEach((season, index) => {
@@ -195,15 +193,16 @@
           const photo = document.getElementById(`season_photo_${newSeasonIndex}`);
           if (photo) photo.classList.add('is-in');
 
-          if (seasonTitle) {
+          if (seasonDynamic) {
             if (isFirstLoad) {
-              seasonTitle.style.opacity = "1";
+              seasonDynamic.textContent = SEASON_DATA[newSeasonIndex].text;
+              seasonDynamic.style.opacity = "1";
             } else {
-              seasonTitle.style.opacity = "0";
+              seasonDynamic.style.opacity = "0";
               setTimeout(() => {
-                seasonTitle.textContent = SEASON_DATA[newSeasonIndex].text;
-                seasonTitle.style.opacity = "1";
-              }, 400);
+                seasonDynamic.textContent = SEASON_DATA[newSeasonIndex].text;
+                seasonDynamic.style.opacity = "1";
+              }, 450);
             }
           }
         }
@@ -226,9 +225,24 @@
         if (progress < 1) {
           requestAnimationFrame(loadingLoop);
         } else {
-          if (finalCopy) finalCopy.classList.add("is-on");
-          // 로딩이 끝나면 기존처럼 1.5초 뒤에 자동으로 다음 페이지로 넘김
-          setTimeout(() => { if (currentPage === 1) goNext(); }, 1500);
+          if (seasonDynamic) {
+            seasonDynamic.style.opacity = "0";
+            setTimeout(() => {
+              seasonDynamic.textContent = "10번의 사계절을 지나,";
+              seasonDynamic.style.opacity = "1";
+
+              if (finalCopy) finalCopy.classList.add("is-on");
+
+              setTimeout(() => {
+                if (currentPage === 1) goNext();
+              }, 1000);
+            }, 500);
+          } else {
+            if (finalCopy) finalCopy.classList.add("is-on");
+            setTimeout(() => {
+              if (currentPage === 1) goNext();
+            }, 1500);
+          }
         }
       }
 

@@ -372,33 +372,46 @@ html, body {
   z-index: 10; pointer-events: none;
 }
 
-/* (2) 사진 위 텍스트 */
-.cover-top { 
-  position: absolute; top: 5px; left: 0; right: 0;
-  z-index: 15; display: flex; align-items: center; justify-content: center;
-}
-
-.season-title { 
-  font-family: 'Nanum Brush Script', cursive; 
-  font-size: 36px; color: var(--accent-dark); 
-  letter-spacing: 0.05em; font-weight: 400;
-  text-shadow: 0 2px 10px rgba(255,255,255,0.9), 0 0 20px rgba(255,255,255,0.8);
-  transition: opacity 0.4s ease;
-}
-
-/* (3) 피날레 문구 */
+/* (3) 하단 문구 영역: 높이 고정 및 폰트 설정 */
 .cover-bottom { 
-  opacity: 0; transform: translateY(10px); transition: 0.6s ease; 
-  flex-shrink: 0; margin-top: 5px; height: 65px; 
+  flex-shrink: 0;
+  height: 90px;
+  margin-top: 5px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
-.cover-bottom.is-on { opacity: 1; transform: translateY(0); }
 
-/* [수정] 폰트 기존 명조체 / 손글씨체로 원복 완료 */
-.cover-bottom p { 
-  font-size: 14px; color: #888; margin: 0; 
-  font-family: "Noto Serif KR", serif; letter-spacing: 0.05em; font-weight: 500; 
+.season-dynamic {
+  font-family: 'Nanum Brush Script', cursive;
+  font-size: 32px;
+  color: var(--accent-dark);
+  margin: 0;
+  letter-spacing: 0.05em;
+  font-weight: 400;
+  transition: opacity 0.5s ease-in-out;
+  line-height: 40px;
+  height: 40px;
+  white-space: nowrap;
+  will-change: opacity;
 }
-.cover-bottom h3 { 
-  font-size: 32px; font-weight: 400; margin: 2px 0 0; 
-  color: var(--accent-dark); font-family: 'Nanum Brush Script', cursive; 
+
+.cover-bottom h3 {
+  font-size: 32px;
+  font-weight: 400;
+  margin: 0;
+  color: var(--accent-dark);
+  font-family: 'Nanum Brush Script', cursive;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.6s ease;
+  line-height: 40px;
+  height: 40px;
+}
+
+.cover-bottom.is-on h3 {
+  opacity: 1;
+  transform: translateY(0);
 }
