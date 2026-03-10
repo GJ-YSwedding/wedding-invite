@@ -14,10 +14,7 @@
           { id: "2015.12", text: "부처님께 오래 가도록 기원" },
           { id: "2016.01", text: "첫 여행은 전주!" },
           { id: "2016.06", text: "꽃 선물 최고" },
-          { id: "2016.07", text: "하늘 공원 최고시다" },
-          { id: "2016.12", text: "파도가 엄청 났던 속초" },
           { id: "2017.01", text: "강남 데이트" },
-          { id: "2017.04", text: "첫 공연 관람" },
           { id: "2017.05", text: "수원 첫 방문, 이렇게 자주 가게 될 줄이야" },
           { id: "2017.06", text: "장미없는 장미축제" },
           { id: "2017.07", text: "영서와 처음이자 마지막 곱창" },
@@ -45,13 +42,11 @@
           { id: "2019.06", text: "수원 만두집… 전설의 시작" },
           { id: "2019.08", text: "서울숲 나들이" },
           { id: "2019.10", text: "영서 어학연수 가는 날, 한 반년 못 봤슈" },
-          { id: "2019.11", text: "영서 어햑 연수 기간, 머리는 왜 짧았더라" },
-          { id: "2020.01", text: "영서 어햑 연수 기간 2, 머리는 왜 짧았더라" },
+          { id: "2019.11", text: "영서 in 아일랜드" },
           { id: "2020.09", text: "한국에 돌아온 걸 환영해 영서야!" },
           { id: "2020.10", text: "생각보다 맛없었음" },
           { id: "2020.11", text: "북한산 첫 등산" },
           { id: "2020.12", text: "순천 꼭 가십쇼 2번 가십쇼" },
-          { id: "2021.02", text: "수원은 올 때 마다 좋아요" },
           { id: "2021.04", text: "수원에서 대차게 싸우고 찍은 사진" },
           { id: "2021.05", text: "봄 봄 봄" },
           { id: "2021.06", text: "환상의 나라로 오세요~, 영서 있음" },
@@ -60,7 +55,7 @@
           { id: "2021.10", text: "추천 맛집, 덕수궁 리에제 와플" },
           { id: "2021.11", text: "순천 꼭 가십쇼 2번 가십쇼" },
           { id: "2022.03", text: "처음으로 고양이에게 빠진 날. 고양이 별로 간 진이" },
-          { id: "2022.04", text: "또 수원임" },
+          { id: "2022.04", text: "늘 좋은 수원 화성" },
           { id: "2022.07", text: "놀이 공원은 경주가 낫습니다" },
           { id: "2022.08", text: "그늘져서 좋았던 걷기 대회" },
           { id: "2022.09", text: "스타벅스 리저브드 체험" },
@@ -81,7 +76,6 @@
           { id: "2024.05", text: "시립대 여전하더라구요" },
           { id: "2024.06", text: "피시방에 먹으러 감" },
           { id: "2024.07", text: "문방구 털어서 신남" },
-          { id: "2024.08", text: "꼬양이 꼬시는 중" },
           { id: "2024.10", text: "모든 게 좋았던 제주도 여행" },
           { id: "2024.11", text: "이땐 몰랐지 여기 살게될 줄" },
           { id: "2025.01", text: "가전 계약! 아직도 갚고 있습니다" },
@@ -91,7 +85,6 @@
           { id: "2025.05", text: "동생이 먼저 닥터 리가 될 줄이야" },
           { id: "2025.06", text: "진짜 가족이 된 날" },
           { id: "2025.08", text: "새 가족과의 첫 만남" },
-          { id: "2025.09", text: "3가족 거실에서 평화롭게 낮잠 중" },
           { id: "2025.11", text: "스플렌더 중독의 시작" },
           { id: "2025.12", text: "첫 집에서 본 첫 눈의 흔적" },
         ]
@@ -106,15 +99,97 @@
       const prevBtn = document.getElementById("prevBtn");
       const nextBtn = document.getElementById("nextBtn");
       const photoStack = document.getElementById("photoStack");
+      const quickLocationBtn = document.getElementById("quickLocationBtn");
       const slotPhoto = document.getElementById("slotPhoto");
       const slotSpin = document.getElementById("slotSpin");
-      const slotBarFill = document.getElementById("slotBarFill"); // 슬롯 퍼센트 바
-      const slotCaption = document.getElementById("slotCaption"); // [NEW] 캡션 요소
+      const slotBarFill = document.getElementById("slotBarFill");
+      const slotCaption = document.getElementById("slotCaption");
+      const slotYearEl = document.getElementById("slotYear");
+      const slotDragBar = document.getElementById("slotDragBar");
+      const slotThumb = document.getElementById("slotThumb");
       let currentPage = 1;
 
       // 설정된 리스트 가져오기
       const galleryPhotos = DATA_CONFIG.galleryImages;
+      function parseYmToIndex(id) {
+          const [y, m] = id.split('.').map(Number);
+          return y * 12 + (m - 1);
+        }
 
+        function indexToYm(idx) {
+          const y = Math.floor(idx / 12);
+          const m = (idx % 12) + 1;
+          return {
+            y,
+            m,
+            label: `${y} . ${String(m).padStart(2, '0')}`
+          };
+        }
+
+        const availablePhotos = [...galleryPhotos]
+          .map(item => ({ ...item, monthIndex: parseYmToIndex(item.id) }))
+          .sort((a, b) => a.monthIndex - b.monthIndex);
+
+        const slotMinIndex = availablePhotos[0].monthIndex;
+        const slotMaxIndex = availablePhotos[availablePhotos.length - 1].monthIndex;
+
+        function clamp(value, min, max) {
+          return Math.max(min, Math.min(max, value));
+        }
+
+        function findClosestPhoto(monthIndex) {
+          let closest = availablePhotos[0];
+          let minDiff = Math.abs(monthIndex - closest.monthIndex);
+
+          for (const item of availablePhotos) {
+            const diff = Math.abs(monthIndex - item.monthIndex);
+            if (diff < minDiff) {
+              minDiff = diff;
+              closest = item;
+            }
+          }
+          return closest;
+        }
+
+        function getPercentFromMonthIndex(monthIndex) {
+          return ((monthIndex - slotMinIndex) / (slotMaxIndex - slotMinIndex)) * 100;
+        }
+
+        function setSlotSlider(percent, options = {}) {
+          const { moveThumb = true, moveFill = true } = options;
+          const safePercent = clamp(percent, 0, 100);
+
+          if (moveFill && slotBarFill) {
+            slotBarFill.style.width = `${safePercent}%`;
+          }
+
+          if (moveThumb && slotThumb) {
+            slotThumb.style.left = `${safePercent}%`;
+          }
+        }
+
+        function showSlotPreviewByIndex(monthIndex, options = {}) {
+          const ym = indexToYm(monthIndex);
+          if (slotYearEl) slotYearEl.textContent = ym.label;
+          setSlotSlider(getPercentFromMonthIndex(monthIndex), options);
+        }
+
+        function showSlotFinalPhoto(photoItem) {
+          const ym = indexToYm(photoItem.monthIndex);
+          if (slotYearEl) slotYearEl.textContent = ym.label;
+
+          const percent = getPercentFromMonthIndex(photoItem.monthIndex);
+          setSlotSlider(percent);
+
+          slotPhoto.classList.remove("is-on");
+          slotPhoto.style.backgroundImage = `url(assets/images/gallery/${photoItem.id}.jpg)`;
+
+          requestAnimationFrame(() => {
+            slotPhoto.classList.add("is-on");
+          });
+
+          slotCaption.innerText = photoItem.text || "";
+        }
       // ==========================================================
       // [추가된 부분] 4계절 로딩을 위한 설정 및 사진 DOM 삽입
       // ==========================================================
@@ -157,14 +232,17 @@
         if (currentPage === pages.length) { nextBtn.classList.add('is-hidden'); } 
         else { nextBtn.classList.remove('is-hidden'); }
       }
-
+// 틸팅 기능 비활성화
+/*
       window.addEventListener("mousemove", (e) => {
         const x = e.clientX, y = e.clientY;
         const centerX = window.innerWidth / 2, centerY = window.innerHeight / 2;
         const rotX = -((y - centerY) / centerY) * 20, rotY = ((x - centerX) / centerX) * 20;
         book.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
       });
-
+*/
+// 모바일 기울기 틸팅 비활성화
+/*
       if (window.DeviceOrientationEvent) {
         window.addEventListener("deviceorientation", (e) => {
           if (e.beta !== null && e.gamma !== null) {
@@ -175,7 +253,7 @@
           }
         });
       }
-
+*/
       let startTime = null;
 
       function loadingLoop(ts) {
@@ -267,60 +345,167 @@
 
       prevBtn.onclick = goPrev; 
       nextBtn.onclick = goNext;
-
-      let startX = 0;
-      window.addEventListener("touchstart", e => startX = e.touches[0].clientX);
-      window.addEventListener("touchend", e => {
-        const diff = startX - e.changedTouches[0].clientX;
-        if (Math.abs(diff) > 50) { if (diff > 0) goNext(); else goPrev(); }
+          if (quickLocationBtn) {
+      quickLocationBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        goToPage(5);
       });
+    }
 
-      // Memory Slot Logic
-      slotSpin.onclick = () => {
-        // [안전장치] 만약 설정된 사진 리스트가 비어있다면 작동 중지
-        if (!galleryPhotos || galleryPhotos.length === 0) {
-            alert("사진 목록이 설정되지 않았습니다.");
-            return;
+      function goToPage(targetPage) {
+        if (targetPage < 1 || targetPage > pages.length) return;
+
+        if (targetPage > currentPage) {
+          while (currentPage < targetPage) {
+            document.getElementById(`page${currentPage}`).classList.add("flipped");
+            currentPage++;
+          }
+        } else if (targetPage < currentPage) {
+          while (currentPage > targetPage) {
+            currentPage--;
+            document.getElementById(`page${currentPage}`).classList.remove("flipped");
+          }
         }
 
-        slotSpin.disabled = true;
-        slotSpin.innerText = "추억을 불러오는 중..."; // 버튼 문구 변경
-        slotPhoto.classList.remove('is-on');
-        slotCaption.innerText = ""; // 문구 초기화
-        
-        const duration = 1600, start = performance.now();
-        const interval = setInterval(() => {
-          const tempY = 2015 + Math.floor(Math.random()*11), tempM = Math.floor(Math.random()*12)+1;
-          document.getElementById("slotYear").textContent = `${tempY} . ${String(tempM).padStart(2, '0')}`;
-          
-          if (performance.now() - start > duration) {
-            clearInterval(interval);
-            
-            // 보유한 사진 리스트 중 랜덤 선택
-            const pick = galleryPhotos[Math.floor(Math.random() * galleryPhotos.length)];
-            const [y, m] = pick.id.split('.');
-            
-            document.getElementById("slotYear").textContent = `${y} . ${m}`;
-            
-            // 퍼센트 바 및 텍스트 업데이트
-            const per = Math.round(((parseInt(y) - 2015) / 11) * 100);
-            slotBarFill.style.width = per + "%";
-            document.getElementById("slotPerText").textContent = per + "%";
-            
-            // 사진 로드 (경로 에러 시 처리는 css background 특성상 조용히 실패함)
-            slotPhoto.style.backgroundImage = `url(assets/images/gallery/${pick.id}.jpg)`;
-            slotPhoto.classList.add("is-on"); 
+        updatePageStacking();
+      }
 
-            // 설명 문구 표시
-            slotCaption.innerText = pick.text || "";
-            
-            // 버튼 원복
-            slotSpin.innerText = "추억 돌리기";
-            slotSpin.disabled = false;
-          }
-        }, 50);
-      };
+
+      let startX = 0;
+      let isSwipeBlocked = false;
+
+      window.addEventListener("touchstart", (e) => {
+        const target = e.target;
+
+        // 메모리 슬롯 바/손잡이/슬롯 영역에서 시작한 터치는 페이지 넘김 스와이프 제외
+        if (
+          target.closest("#slotDragBar") ||
+          target.closest("#slotThumb") ||
+          target.closest(".slot-window")
+        ) {
+          isSwipeBlocked = true;
+          return;
+        }
+
+        isSwipeBlocked = false;
+        startX = e.touches[0].clientX;
+      }, { passive: true });
+
+      window.addEventListener("touchend", (e) => {
+        if (isSwipeBlocked || isSlotDragging) {
+          isSwipeBlocked = false;
+          return;
+        }
+
+        const diff = startX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) goNext();
+          else goPrev();
+        }
+      }, { passive: true });
+
+      // Memory Slot Logic
+slotSpin.onclick = () => {
+  if (!galleryPhotos || galleryPhotos.length === 0) {
+    alert("사진 목록이 설정되지 않았습니다.");
+    return;
+  }
+
+  slotSpin.disabled = true;
+  slotSpin.innerText = "추억을 불러오는 중...";
+  slotPhoto.classList.remove("is-on");
+  slotCaption.innerText = "";
+
+  const duration = 1600;
+  const start = performance.now();
+
+  const interval = setInterval(() => {
+    const randomIndex = Math.floor(Math.random() * (slotMaxIndex - slotMinIndex + 1)) + slotMinIndex;
+
+    // 랜덤 도는 동안에는 날짜만 바꾸고, 손잡이/바는 고정
+    showSlotPreviewByIndex(randomIndex, {
+      moveThumb: false,
+      moveFill: false
+    });
+
+    if (performance.now() - start > duration) {
+      clearInterval(interval);
+
+      const pick = galleryPhotos[Math.floor(Math.random() * galleryPhotos.length)];
+      const pickIndex = parseYmToIndex(pick.id);
+      const closest = findClosestPhoto(pickIndex);
+
+      // 최종 확정 시에만 손잡이와 바를 해당 날짜 위치로 이동
+      showSlotFinalPhoto(closest);
+
+      slotSpin.innerText = "추억 랜덤 뽑기";
+      slotSpin.disabled = false;
+    }
+  }, 50);
+};
       
+
+let isSlotDragging = false;
+
+function getMonthIndexFromClientX(clientX) {
+  const rect = slotDragBar.getBoundingClientRect();
+  const ratio = clamp((clientX - rect.left) / rect.width, 0, 1);
+  return Math.round(slotMinIndex + ratio * (slotMaxIndex - slotMinIndex));
+}
+
+function handleSlotDragMove(clientX) {
+  const monthIndex = getMonthIndexFromClientX(clientX);
+  showSlotPreviewByIndex(monthIndex);
+}
+
+function handleSlotDragEnd(clientX) {
+  const monthIndex = getMonthIndexFromClientX(clientX);
+  const closest = findClosestPhoto(monthIndex);
+
+  slotDragBar.classList.remove("is-dragging");
+  isSlotDragging = false;
+
+  showSlotFinalPhoto(closest);
+}
+
+function startSlotDrag(clientX) {
+  isSlotDragging = true;
+  slotDragBar.classList.add("is-dragging");
+  slotPhoto.classList.remove("is-on");
+  slotCaption.innerText = "";
+  handleSlotDragMove(clientX);
+}
+
+if (slotDragBar && slotThumb) {
+  slotThumb.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    startSlotDrag(e.clientX);
+    slotThumb.setPointerCapture(e.pointerId);
+  });
+
+  slotDragBar.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    startSlotDrag(e.clientX);
+  });
+
+  window.addEventListener("pointermove", (e) => {
+    if (!isSlotDragging) return;
+    handleSlotDragMove(e.clientX);
+  });
+
+  window.addEventListener("pointerup", (e) => {
+    if (!isSlotDragging) return;
+    handleSlotDragEnd(e.clientX);
+  });
+
+  window.addEventListener("pointercancel", () => {
+    if (!isSlotDragging) return;
+    slotDragBar.classList.remove("is-dragging");
+    isSlotDragging = false;
+  });
+}
       // =========================================
       // [추가] 시네마틱 애니메이션 시퀀스 (최종)
       // =========================================
@@ -369,6 +554,8 @@
           
         }, 600);
       }, 2600);
-
+      if (availablePhotos.length > 0) {
+            showSlotPreviewByIndex(availablePhotos[0].monthIndex);
+          }
       updatePageStacking();
     })();
