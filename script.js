@@ -376,11 +376,37 @@
 
 
       let startX = 0;
-      window.addEventListener("touchstart", e => startX = e.touches[0].clientX);
-      window.addEventListener("touchend", e => {
+      let isSwipeBlocked = false;
+
+      window.addEventListener("touchstart", (e) => {
+        const target = e.target;
+
+        // 메모리 슬롯 바/손잡이/슬롯 영역에서 시작한 터치는 페이지 넘김 스와이프 제외
+        if (
+          target.closest("#slotDragBar") ||
+          target.closest("#slotThumb") ||
+          target.closest(".slot-window")
+        ) {
+          isSwipeBlocked = true;
+          return;
+        }
+
+        isSwipeBlocked = false;
+        startX = e.touches[0].clientX;
+      }, { passive: true });
+
+      window.addEventListener("touchend", (e) => {
+        if (isSwipeBlocked || isSlotDragging) {
+          isSwipeBlocked = false;
+          return;
+        }
+
         const diff = startX - e.changedTouches[0].clientX;
-        if (Math.abs(diff) > 50) { if (diff > 0) goNext(); else goPrev(); }
-      });
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) goNext();
+          else goPrev();
+        }
+      }, { passive: true });
 
       // Memory Slot Logic
 slotSpin.onclick = () => {
@@ -457,12 +483,14 @@ function startSlotDrag(clientX) {
 if (slotDragBar && slotThumb) {
   slotThumb.addEventListener("pointerdown", (e) => {
     e.preventDefault();
+    e.stopPropagation();
     startSlotDrag(e.clientX);
     slotThumb.setPointerCapture(e.pointerId);
   });
 
   slotDragBar.addEventListener("pointerdown", (e) => {
     e.preventDefault();
+    e.stopPropagation();
     startSlotDrag(e.clientX);
   });
 
