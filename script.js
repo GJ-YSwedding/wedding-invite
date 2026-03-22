@@ -112,6 +112,7 @@
       const fullImage = document.getElementById("fullImage");
       const fullImageCaption = document.getElementById("fullImageCaption");
       let currentPage = 1;
+      let isIntroReady = false;
 
       // 설정된 리스트 가져오기
       const galleryPhotos = DATA_CONFIG.galleryImages;
@@ -358,6 +359,7 @@
               if (finalCopy) finalCopy.classList.add("is-on");
 
               setTimeout(() => {
+                isIntroReady = true;
                 if (book) book.classList.remove("intro-lock");
                 if (currentPage === 1) goNext();
               }, 1000);
@@ -365,6 +367,7 @@
           } else {
             if (finalCopy) finalCopy.classList.add("is-on");
             setTimeout(() => {
+              isIntroReady = true;
               if (book) book.classList.remove("intro-lock");
               if (currentPage === 1) goNext();
             }, 1500);
@@ -393,12 +396,17 @@
 
       prevBtn.onclick = goPrev; 
       nextBtn.onclick = goNext;
-          if (quickLocationBtn) {
-      quickLocationBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        goToPage(5);
-      });
-    }
+
+      if (quickLocationBtn) {
+        quickLocationBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+
+          isIntroReady = true;
+          if (book) book.classList.remove("intro-lock");
+
+          goToPage(5);
+        });
+      }
 
       function goToPage(targetPage) {
         if (targetPage < 1 || targetPage > pages.length) return;
@@ -454,6 +462,11 @@
       window.addEventListener("touchend", (e) => {
         if (isSwipeBlocked || isSlotDragging) {
           isSwipeBlocked = false;
+          return;
+        }
+
+        // 첫 페이지 인트로가 끝나기 전에는 스와이프 넘김 금지
+        if (currentPage === 1 && !isIntroReady) {
           return;
         }
 
