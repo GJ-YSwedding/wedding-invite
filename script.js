@@ -110,6 +110,7 @@
       const galleryGrid = document.getElementById("galleryGrid");
       const galleryOverlay = document.getElementById("galleryOverlay");
       const fullImage = document.getElementById("fullImage");
+      const fullImageDate = document.getElementById("fullImageDate");
       const fullImageCaption = document.getElementById("fullImageCaption");
       let currentPage = 1;
       let isIntroReady = false;
@@ -212,10 +213,17 @@
 
             tile.addEventListener("click", (e) => {
               e.stopPropagation();
+
               if (fullImage) fullImage.src = imgUrl;
-              if (fullImageCaption) {
-                fullImageCaption.textContent = item.text || item.id;
+
+              if (fullImageDate) {
+                fullImageDate.textContent = item.date || item.id || "";
               }
+
+              if (fullImageCaption) {
+                fullImageCaption.textContent = item.text || "";
+              }
+
               if (galleryOverlay) {
                 galleryOverlay.classList.add("active");
               }

@@ -669,6 +669,17 @@ html, body {
   letter-spacing: 1px;
 }
 
+.full-image-date {
+  font-family: "Noto Serif KR", serif;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.85);
+  text-align: center;
+  line-height: 1.5;
+  margin: 0 0 8px;
+  letter-spacing: 0.06em;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+
 /* =========================================
    시즌 문구 폰트 튐 완화
 ========================================= */
