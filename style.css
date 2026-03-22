@@ -52,6 +52,23 @@ html, body {
   transition: transform 0.15s ease-out; 
 }
 
+/* 인트로 동안 뒤 페이지 숨김 */
+.book.intro-lock .page:not(#page1) {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.book.intro-lock #page1 {
+  z-index: 999 !important;
+}
+
+/* page1의 뒷면도 인트로 동안 숨김 */
+.book.intro-lock #page1 .page-back {
+  opacity: 0;
+  visibility: hidden;
+}
+
 /* [추가] 팜플렛이 완전히 커지기 전(grow 상태 전)까지 틸팅(회전) 강제 비활성화 */
 #bookContainer:not(.grow) .book {
   transform: none !important;
@@ -101,8 +118,11 @@ html, body {
 }
 
 .book-content {
-  flex: 1; padding: 30px 24px 60px 24px;
-  display: flex; flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 30px 24px 60px 24px;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   position: relative;
 }
@@ -523,3 +543,727 @@ html, body {
     transform: translateX(2px);
   }
 }
+
+/* =========================================
+   PAGE 7: Gallery
+========================================= */
+.gallery-page-content {
+  position: relative;
+  padding-bottom: 50px;
+}
+
+.gallery-intro {
+  font-family: "Noto Serif KR", serif;
+  font-size: 13px;
+  color: #777;
+  text-align: center;
+  margin: 2px 0 14px;
+  line-height: 1.7;
+}
+
+.gallery-container {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 14px;
+  padding-bottom: 18px;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) #f0ede8;
+}
+
+.gallery-container::-webkit-scrollbar {
+  width: 10px;
+}
+
+.gallery-container::-webkit-scrollbar-track {
+  background: #f0ede8;
+  border-radius: 999px;
+}
+
+.gallery-container::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 999px;
+  border: 2px solid #f0ede8;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding-bottom: 50px;
+}
+
+.gallery-item {
+  aspect-ratio: 1 / 1;
+  background-size: cover;
+  background-position: center;
+  background-color: #f5f3ef;
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.04);
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.gallery-item:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+.gallery-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  padding: 20px;
+}
+
+.gallery-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.full-image {
+  max-width: 100%;
+  max-height: 70%;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 15px;
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+.gallery-overlay.active .full-image {
+  transform: scale(1);
+}
+
+.full-image-caption {
+  font-family: "Noto Serif KR", serif;
+  font-size: 13px;
+  color: #fff;
+  text-align: center;
+  line-height: 1.6;
+  padding: 0 15px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+
+.close-hint {
+  position: absolute;
+  bottom: 30px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 1px;
+}
+
+/* =========================================
+   시즌 문구 폰트 튐 완화
+========================================= */
+.season-dynamic,
+.cover-bottom h3 {
+  font-family: 'Nanum Brush Script', 'Noto Serif KR', serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.gallery-grid,
+.gallery-item {
+  touch-action: pan-y;
+}
+/* =========================================
+   PAGE 8: Celebration (Popup Version)
+========================================= */
+.celebration-page-content {
+  position: relative;
+  padding-bottom: 50px;
+}
+
+.celebration-subtitle {
+  font-family: "Noto Serif KR", serif;
+  font-size: 12.5px;
+  color: #777;
+  text-align: center;
+  margin: 2px 0 18px;
+  line-height: 1.8;
+  word-break: keep-all;
+}
+
+.celebration-container {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 8px;
+  padding-bottom: 50px;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) #f0ede8;
+}
+
+.celebration-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.celebration-container::-webkit-scrollbar-track {
+  background: #f0ede8;
+  border-radius: 999px;
+}
+
+.celebration-container::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 999px;
+  border: 1px solid #f0ede8;
+}
+
+.account-section {
+  margin-bottom: 18px;
+}
+
+.section-label {
+  font-family: "Noto Serif KR", serif;
+  font-size: 12px;
+  color: var(--accent);
+  margin-bottom: 10px;
+  padding-left: 6px;
+  border-left: 2px solid var(--accent);
+  text-align: left;
+}
+
+.person-row {
+  margin-bottom: 10px;
+  border-radius: 12px;
+  background: linear-gradient(to bottom, #fdfaf5, #f8f3eb);
+  border: 1px solid #efe9df;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+  padding: 14px 14px 12px;
+}
+
+.person-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+}
+
+.person-name {
+  font-size: 15px;
+  font-family: "Noto Serif KR", serif;
+  color: #444;
+}
+
+.person-name span {
+  font-size: 12px;
+  color: #999;
+  margin-left: 6px;
+}
+
+.person-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.person-actions.single .btn-action {
+  flex: 1 1 100%;
+}
+
+.btn-action {
+  flex: 1;
+  padding: 12px 0;
+  font-size: 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.btn-action:active {
+  transform: scale(0.98);
+}
+
+.btn-letter {
+  background: #fdf1a7;
+  color: #3c1e1e;
+  border: 1px solid #f5e38d;
+}
+
+.btn-account {
+  background: #fff;
+  color: var(--accent-dark);
+  border: 1px solid #e3dbcf;
+}
+
+/* 계좌 팝업 */
+.account-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.42);
+  z-index: 130;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.account-modal.show {
+  display: flex;
+}
+
+.account-modal-card {
+  width: 100%;
+  max-width: 300px;
+  background: #fffdf9;
+  border-radius: 12px;
+  padding: 24px 18px 18px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.28);
+  position: relative;
+  text-align: center;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: #8b7b68;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.account-modal-title {
+  font-family: "Noto Serif KR", serif;
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.account-modal-name {
+  font-family: "Noto Serif KR", serif;
+  font-size: 17px;
+  color: #444;
+  margin-bottom: 16px;
+}
+
+.account-modal-name span {
+  font-size: 12px;
+  color: #999;
+  margin-left: 6px;
+}
+
+.account-info-box {
+  background: #f7f3ee;
+  border: 1px solid #ece4d8;
+  border-radius: 10px;
+  padding: 14px 12px;
+  margin-bottom: 14px;
+}
+
+.account-bank {
+  font-family: "Noto Serif KR", serif;
+  font-size: 13px;
+  color: #7d6a53;
+  margin-bottom: 7px;
+}
+
+.account-number {
+  font-family: "Noto Sans KR", sans-serif;
+  font-size: 15px;
+  color: #333;
+  word-break: break-all;
+}
+
+.account-modal-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-account-copy {
+  background: var(--accent-dark);
+  color: #fff;
+}
+
+.btn-account-close {
+  background: #ece7e0;
+  color: #7a6e5d;
+}
+
+/* 축하 편지 팝업 */
+.letter-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 140;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.letter-modal.show {
+  display: flex;
+}
+
+.letter-paper {
+  width: 100%;
+  max-width: 300px;
+  background: #fffdf9;
+  border-radius: 4px;
+  padding: 30px 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+.letter-paper::after {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(199, 178, 153, 0.2);
+  pointer-events: none;
+}
+
+.letter-paper h4 {
+  font-family: 'Nanum Brush Script', 'Noto Serif KR', serif;
+  font-size: 26px;
+  margin: 0 0 20px;
+  color: var(--accent-dark);
+  text-align: center;
+  line-height: 1.2;
+  min-height: 32px;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.input-row {
+  width: 100%;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.input-row input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  border-bottom: 1px solid #e0d9cf;
+  padding: 6px 5px;
+  font-size: 14px;
+  outline: none;
+  font-family: "Noto Serif KR", serif;
+}
+
+.input-row input::placeholder {
+  color: #bbb;
+  font-size: 13px;
+}
+
+.letter-paper textarea {
+  width: 100%;
+  height: 210px;
+  border: none;
+  background: transparent;
+  border-bottom: 1px solid #e0d9cf;
+  resize: none;
+  font-size: 14px;
+  line-height: 1.8;
+  font-family: "Noto Serif KR", serif;
+  outline: none;
+  padding: 5px;
+  position: relative;
+  z-index: 1;
+}
+
+.letter-footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.btn-send {
+  flex: 1.4;
+  background: var(--accent-dark);
+  color: #fff;
+  padding: 9px 0;
+  border-radius: 6px;
+  border: none;
+  font-size: 12.5px;
+  cursor: pointer;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(93, 77, 55, 0.15);
+}
+
+.btn-close {
+  flex: 1;
+  background: #ece7e0;
+  color: #7a6e5d;
+  padding: 9px 0;
+  border-radius: 6px;
+  border: none;
+  font-size: 12.5px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* 봉투 */
+.envelope-fly {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%) scale(0);
+  font-size: 40px;
+  pointer-events: none;
+}
+
+@keyframes envelopePop {
+  0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 0; }
+  70% { transform: translate(-50%, -50%) scale(1.3) rotate(-10deg); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes envelopeFlyAway {
+  0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: translate(-50%, -650%) scale(0.4) rotate(15deg); opacity: 0; }
+}
+
+/* 토스트 */
+.celebration-toast {
+  position: absolute;
+  left: 50%;
+  bottom: 76px;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.82);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 300;
+  white-space: nowrap;
+}
+
+.celebration-toast.show {
+  opacity: 1;
+}
+
+/* 하트 스플래시 */
+.heart-splash {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-size: 14px;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 210;
+  transform: translate(-50%, -50%) scale(0.3);
+  animation: heartSplashFloat 1s ease-out forwards;
+}
+
+@keyframes heartSplashFloat {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--dx) * 0.2), calc(-50% + var(--dy) * 0.2)) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.15);
+  }
+}
+
+.gallery-page-content,
+.celebration-page-content,
+.gallery-container,
+.celebration-container {
+  min-height: 0;
+}
+
+/* Celebration 한 줄 정렬 버전 */
+.person-row.inline {
+  padding: 12px 14px;
+}
+
+.person-row.inline .person-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
+.inline-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  width: auto;
+  margin-top: 0;
+  flex-shrink: 0;
+}
+
+.inline-actions.single {
+  gap: 0;
+}
+
+.btn-mini {
+  flex: 0 0 auto;
+  min-width: 64px;
+  height: 32px;
+  padding: 0 10px;
+  font-size: 11px;
+  border-radius: 999px;
+  box-shadow: none;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.person-row.inline .person-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.person-row.inline .person-name span {
+  display: inline-block;
+  margin-left: 4px;
+}
+
+/* 버튼이 너무 길어지지 않게 */
+.btn-letter.btn-mini {
+  background: #fdf1a7;
+  color: #3c1e1e;
+  border: 1px solid #f5e38d;
+}
+
+.btn-account.btn-mini {
+  background: #fff;
+  color: var(--accent-dark);
+  border: 1px solid #e3dbcf;
+}
+
+/* Celebration 행 클릭형 */
+.trigger-row {
+  cursor: pointer;
+  padding: 15px 14px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.trigger-row:active {
+  transform: scale(0.995);
+}
+
+.person-arrow {
+  font-size: 22px;
+  line-height: 1;
+  color: #b7a48c;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+/* 액션 선택 팝업 */
+.action-choice-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.42);
+  z-index: 135;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.action-choice-modal.show {
+  display: flex;
+}
+
+.action-choice-card {
+  width: 100%;
+  max-width: 300px;
+  background: #fffdf9;
+  border-radius: 12px;
+  padding: 24px 18px 18px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.28);
+  position: relative;
+  text-align: center;
+}
+
+.action-choice-title {
+  font-family: "Noto Serif KR", serif;
+  font-size: 17px;
+  color: #444;
+  margin-bottom: 8px;
+}
+
+.action-choice-title span {
+  font-size: 12px;
+  color: #999;
+  margin-left: 6px;
+}
+
+.action-choice-desc {
+  font-size: 12px;
+  color: #888;
+  margin: 0 0 16px;
+  line-height: 1.6;
+  font-family: "Noto Serif KR", serif;
+}
+
+.action-choice-buttons {
+  display: flex;
+  gap: 8px;
+}
+
