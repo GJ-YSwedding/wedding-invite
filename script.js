@@ -107,6 +107,10 @@
       const slotYearEl = document.getElementById("slotYear");
       const slotDragBar = document.getElementById("slotDragBar");
       const slotThumb = document.getElementById("slotThumb");
+      const galleryGrid = document.getElementById("galleryGrid");
+      const galleryOverlay = document.getElementById("galleryOverlay");
+      const fullImage = document.getElementById("fullImage");
+      const fullImageCaption = document.getElementById("fullImageCaption");
       let currentPage = 1;
 
       // 설정된 리스트 가져오기
@@ -190,9 +194,45 @@
 
           slotCaption.innerText = photoItem.text || "";
         }
+
+          function initGalleryPage() {
+          if (!galleryGrid) return;
+
+          galleryGrid.innerHTML = "";
+
+          availablePhotos.forEach((item) => {
+            const imgUrl = `assets/images/gallery/${item.id}.jpg`;
+
+            const tile = document.createElement("div");
+            tile.className = "gallery-item";
+            tile.style.backgroundImage = `url('${imgUrl}')`;
+            tile.setAttribute("role", "button");
+            tile.setAttribute("aria-label", `${item.id} 사진 보기`);
+
+            tile.addEventListener("click", (e) => {
+              e.stopPropagation();
+              if (fullImage) fullImage.src = imgUrl;
+              if (fullImageCaption) {
+                fullImageCaption.textContent = item.text || item.id;
+              }
+              if (galleryOverlay) {
+                galleryOverlay.classList.add("active");
+              }
+            });
+
+            galleryGrid.appendChild(tile);
+          });
+
+          if (galleryOverlay) {
+            galleryOverlay.addEventListener("click", () => {
+              galleryOverlay.classList.remove("active");
+            });
+          }
+        }
       // ==========================================================
       // [추가된 부분] 4계절 로딩을 위한 설정 및 사진 DOM 삽입
       // ==========================================================
+      initGalleryPage();
       const SEASON_DATA = [
         { text: "10번의 봄", img: "assets/images/Loading/spring.jpg" },
         { text: "10번의 여름", img: "assets/images/Loading/summer.jpg" },
@@ -277,10 +317,16 @@
               seasonDynamic.style.opacity = "1";
             } else {
               seasonDynamic.style.opacity = "0";
+
               setTimeout(() => {
                 seasonDynamic.textContent = SEASON_DATA[newSeasonIndex].text;
-                seasonDynamic.style.opacity = "1";
-              }, 450);
+
+                requestAnimationFrame(() => {
+                  requestAnimationFrame(() => {
+                    seasonDynamic.style.opacity = "1";
+                  });
+                });
+              }, 250);
             }
           }
         }
@@ -377,11 +423,23 @@
       window.addEventListener("touchstart", (e) => {
         const target = e.target;
 
-        // 메모리 슬롯 바/손잡이/슬롯 영역에서 시작한 터치는 페이지 넘김 스와이프 제외
+        // 세로 스크롤/탭 중심 영역에서는 페이지 넘김 스와이프 제외
         if (
-          target.closest("#slotDragBar") ||
-          target.closest("#slotThumb") ||
-          target.closest(".slot-window")
+        target.closest("#slotDragBar") ||
+        target.closest("#slotThumb") ||
+        target.closest(".slot-window") ||
+        target.closest(".gallery-container") ||
+        target.closest(".gallery-grid") ||
+        target.closest(".gallery-item") ||
+        target.closest("#galleryOverlay") ||
+        target.closest(".celebration-container") ||
+        target.closest(".account-modal") ||
+        target.closest(".letter-modal") ||
+        target.closest(".action-choice-modal") ||
+        target.closest(".person-row") ||
+        target.closest("input") ||
+        target.closest("textarea") ||
+        target.closest("button")
         ) {
           isSwipeBlocked = true;
           return;
@@ -559,3 +617,232 @@ if (slotDragBar && slotThumb) {
           }
       updatePageStacking();
     })();
+
+
+
+      // =========================
+      // Celebration Popup Logic
+      // =========================
+      const accountModal = document.getElementById("accountModal");
+      const accountModalName = document.getElementById("accountModalName");
+      const accountModalBank = document.getElementById("accountModalBank");
+      const accountModalNumber = document.getElementById("accountModalNumber");
+      const accountCopyBtn = document.getElementById("accountCopyBtn");
+
+      const letterModal = document.getElementById("letterModal");
+      const letterTo = document.getElementById("letterTo");
+      const formToPerson = document.getElementById("formToPerson");
+      const formToRole = document.getElementById("formToRole");
+      const formSubject = document.getElementById("formSubject");
+      const messageForm = document.getElementById("messageForm");
+      const envFly = document.getElementById("envFly");
+      const celebrationToast = document.getElementById("celebrationToast");
+      const actionChoiceModal = document.getElementById("actionChoiceModal");
+      const actionChoiceTitle = document.getElementById("actionChoiceTitle");
+      const actionChoiceLetterBtn = document.getElementById("actionChoiceLetterBtn");
+      const actionChoiceAccountBtn = document.getElementById("actionChoiceAccountBtn");
+
+      let currentAccountText = "";
+      let currentActionChoice = {
+        name: "",
+        role: "",
+        bank: "",
+        number: ""
+      };
+
+
+      function showCelebrationToast(message) {
+        if (!celebrationToast) return;
+
+        celebrationToast.textContent = message;
+        celebrationToast.classList.add("show");
+
+        clearTimeout(window.celebrationToastTimer);
+        window.celebrationToastTimer = setTimeout(() => {
+          celebrationToast.classList.remove("show");
+        }, 2000);
+      }
+
+      function openActionChoiceModal(name, role, bank, number) {
+        if (!actionChoiceModal) return;
+
+        currentActionChoice = { name, role, bank, number };
+        actionChoiceTitle.innerHTML = `${name} <span>${role}</span>`;
+
+        actionChoiceLetterBtn.onclick = () => {
+          closeActionChoiceModal();
+          openLetterModal(name);
+        };
+
+        actionChoiceAccountBtn.onclick = () => {
+          closeActionChoiceModal();
+          openAccountModal(name, role, bank, number);
+        };
+
+        actionChoiceModal.classList.add("show");
+      }
+
+      function closeActionChoiceModal() {
+        if (!actionChoiceModal) return;
+        actionChoiceModal.classList.remove("show");
+      }
+
+      function openAccountModal(name, role, bank, number) {
+        if (!accountModal) return;
+
+        accountModalName.innerHTML = `${name} <span>${role}</span>`;
+        accountModalBank.textContent = bank;
+        accountModalNumber.textContent = number;
+        currentAccountText = `${bank} ${number}`;
+
+        accountCopyBtn.onclick = () => copyCelebrationAccount(currentAccountText);
+        accountModal.classList.add("show");
+      }
+
+      function closeAccountModal() {
+        if (!accountModal) return;
+        accountModal.classList.remove("show");
+      }
+
+      async function copyCelebrationAccount(accountInfo) {
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(accountInfo);
+          } else {
+            const tempInput = document.createElement("input");
+            tempInput.value = accountInfo;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+          }
+
+          showCelebrationToast("계좌번호가 복사되었습니다.");
+        } catch (err) {
+          showCelebrationToast("복사에 실패했습니다.");
+        }
+      }
+
+      function openLetterModal(name) {
+        if (!letterModal) return;
+
+        let role = "";
+        if (name === "이관준") role = "신랑";
+        if (name === "이영서") role = "신부";
+
+        letterTo.textContent = `${name}님께 축하 편지 쓰기`;
+        formToPerson.value = name;
+        formToRole.value = role;
+        formSubject.value = `[모바일 청첩장] ${name}님께 온 축하 편지`;
+
+        letterModal.classList.add("show");
+      }
+
+      function closeLetterModal() {
+        if (!letterModal) return;
+        letterModal.classList.remove("show");
+      }
+
+      if (messageForm) {
+        messageForm.addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const formData = new FormData(messageForm);
+          const object = Object.fromEntries(formData);
+          const json = JSON.stringify(object);
+
+          try {
+            if (envFly) {
+              envFly.style.display = "flex";
+              envFly.style.animation = "envelopePop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards";
+            }
+
+            createHeartSplash();
+
+            const response = await fetch("https://api.web3forms.com/submit", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+              },
+              body: json
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || result.success === false) {
+              throw new Error(result.message || "전송 실패");
+            }
+
+            setTimeout(() => {
+              closeLetterModal();
+
+              if (envFly) {
+                envFly.style.animation = "envelopeFlyAway 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards";
+              }
+
+              setTimeout(() => {
+                if (envFly) {
+                  envFly.style.display = "none";
+                  envFly.style.animation = "";
+                }
+                messageForm.reset();
+                showCelebrationToast("축하 편지가 전달되었습니다.");
+              }, 700);
+            }, 500);
+
+          } catch (error) {
+            if (envFly) {
+              envFly.style.display = "none";
+              envFly.style.animation = "";
+            }
+            showCelebrationToast("전송에 실패했습니다. 다시 시도해주세요.");
+          }
+        });
+      }
+
+      // 바깥 영역 누르면 팝업 닫기
+      if (accountModal) {
+        accountModal.addEventListener("click", (e) => {
+          if (e.target === accountModal) closeAccountModal();
+        });
+      }
+
+      if (letterModal) {
+        letterModal.addEventListener("click", (e) => {
+          if (e.target === letterModal) closeLetterModal();
+        });
+      }
+      if (actionChoiceModal) {
+        actionChoiceModal.addEventListener("click", (e) => {
+          if (e.target === actionChoiceModal) closeActionChoiceModal();
+        });
+      }
+
+            function createHeartSplash() {
+        const host = document.querySelector("#page8 .celebration-page-content");
+        if (!host) return;
+
+        const hearts = ["💛", "🤍", "🤎", "💖", "💕"];
+        const total = 8;
+
+        for (let i = 0; i < total; i++) {
+          const heart = document.createElement("div");
+          heart.className = "heart-splash";
+          heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+
+          const angle = (Math.PI * 2 * i) / total + (Math.random() * 0.5 - 0.25);
+          const distance = 60 + Math.random() * 45;
+          const dx = Math.cos(angle) * distance;
+          const dy = Math.sin(angle) * distance - 20;
+
+          heart.style.setProperty("--dx", `${dx}px`);
+          heart.style.setProperty("--dy", `${dy}px`);
+
+          host.appendChild(heart);
+
+          setTimeout(() => {
+            heart.remove();
+          }, 1000);
+        }
+      }

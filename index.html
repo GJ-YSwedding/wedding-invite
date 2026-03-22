@@ -227,6 +227,164 @@
           </div>
         </div>
       </div>
+      
+      <!-- PAGE 7: Gallery -->
+      <div class="page" id="page7">
+        <div class="page-front">
+          <div class="book-content center-align gallery-page-content">
+            <h3 class="page-title">Gallery</h3>
+            <p class="gallery-intro">저희가 함께 걸어온 시간의 조각들입니다</p>
+
+            <div class="gallery-container">
+              <div class="gallery-grid" id="galleryGrid"></div>
+            </div>
+
+            <div class="gallery-overlay" id="galleryOverlay">
+              <img src="" class="full-image" id="fullImage" alt="확대된 이미지">
+              <p class="full-image-caption" id="fullImageCaption"></p>
+              <div class="close-hint">다시 터치하면 돌아갑니다</div>
+            </div>
+          </div>
+        </div>
+        <div class="page-back">
+          <div class="page-left-design">
+            <div class="left-quote">Our Wedding Day</div>
+            <div class="left-date">2026 . 04 . 19</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE 8: Celebration -->
+      <div class="page" id="page8">
+        <div class="page-front">
+          <div class="book-content center-align celebration-page-content">
+            <h3 class="page-title">Celebration</h3>
+            <p class="celebration-subtitle">
+              축복해 주시는 따뜻한 마음 잊지 않고,<br>
+              서로 아끼며 예쁘게 잘 살겠습니다.
+            </p>
+
+    <div class="celebration-container">
+      <!-- 신랑측 -->
+      <div class="account-section">
+        <div class="section-label">신랑측</div>
+
+        <div class="person-row trigger-row" onclick="openActionChoiceModal('이관준', '신랑', '하나은행', '391-911614-92607')">
+          <div class="person-header">
+            <span class="person-name">이관준 <span>신랑</span></span>
+            <span class="person-arrow">›</span>
+          </div>
+        </div>
+
+        <div class="person-row trigger-row" onclick="openAccountModal('이주일', '신랑 아버지', '하나은행', '391-911614-92607')">
+          <div class="person-header">
+            <span class="person-name">이주일 <span>신랑 아버지</span></span>
+            <span class="person-arrow">›</span>
+          </div>
+        </div>
+
+        <div class="person-row trigger-row" onclick="openAccountModal('최정임', '신랑 어머니', '농협', '741092-52-125792')">
+          <div class="person-header">
+            <span class="person-name">최정임 <span>신랑 어머니</span></span>
+            <span class="person-arrow">›</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 신부측 -->
+      <div class="account-section">
+        <div class="section-label">신부측</div>
+
+        <div class="person-row trigger-row" onclick="openActionChoiceModal('이영서', '신부', '우리은행', '1002-348-183849')">
+          <div class="person-header">
+            <span class="person-name">이영서 <span>신부</span></span>
+            <span class="person-arrow">›</span>
+          </div>
+        </div>
+
+        <div class="person-row trigger-row" onclick="openAccountModal('원종화', '신부 어머니', '[은행명]', '[계좌번호]')">
+          <div class="person-header">
+            <span class="person-name">원종화 <span>신부 어머니</span></span>
+            <span class="person-arrow">›</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 신랑/신부 액션 선택 팝업 -->
+    <div class="action-choice-modal" id="actionChoiceModal">
+      <div class="action-choice-card">
+        <button class="modal-close-btn" onclick="closeActionChoiceModal()" aria-label="닫기">×</button>
+
+        <div class="action-choice-title" id="actionChoiceTitle">이관준 <span>신랑</span></div>
+        <p class="action-choice-desc">원하시는 항목을 선택해 주세요.</p>
+
+        <div class="action-choice-buttons">
+          <button class="btn-action btn-letter" id="actionChoiceLetterBtn">✉ 축하 편지</button>
+          <button class="btn-action btn-account" id="actionChoiceAccountBtn">🏛 계좌 보기</button>
+        </div>
+      </div>
+    </div>
+
+            <!-- 계좌 팝업 -->
+            <div class="account-modal" id="accountModal">
+              <div class="account-modal-card">
+                <button class="modal-close-btn" onclick="closeAccountModal()" aria-label="닫기">×</button>
+                <div class="account-modal-title">마음 전하실 곳</div>
+                <div class="account-modal-name" id="accountModalName">이관준 <span>신랑</span></div>
+
+                <div class="account-info-box">
+                  <div class="account-bank" id="accountModalBank">[은행명]</div>
+                  <div class="account-number" id="accountModalNumber">[계좌번호]</div>
+                </div>
+
+                <div class="account-modal-actions">
+                  <button class="btn-action btn-account btn-mini-copy" id="accountCopyBtn">📋 복사하기</button>
+                  <button class="btn-action btn-account btn-mini-close" onclick="closeAccountModal()">닫기</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 축하 편지 팝업 -->
+            <div class="letter-modal" id="letterModal">
+              <div class="letter-paper">
+                <h4 id="letterTo">이관준님께 축하 편지 쓰기</h4>
+
+                <form id="messageForm">
+                  <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY">
+                  <input type="hidden" name="subject" id="formSubject" value="[모바일 청첩장] 축하 편지">
+                  <input type="hidden" name="to_person" id="formToPerson" value="">
+                  <input type="hidden" name="to_role" id="formToRole" value="">
+
+                  <div class="input-row">
+                    <input type="text" name="from_name" id="fromName" placeholder="From. 보내는 분 성함" required>
+                  </div>
+
+                  <textarea name="message" id="letterMessage" placeholder="따뜻한 축하의 마음을 남겨주세요." required></textarea>
+
+                  <div class="letter-footer">
+                    <button type="submit" class="btn-send">전송하기</button>
+                    <button type="button" class="btn-close" onclick="closeLetterModal()">닫기</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- 전송 애니메이션 -->
+            <div class="envelope-fly" id="envFly">💌</div>
+
+            <!-- 토스트 -->
+            <div id="celebrationToast" class="celebration-toast">계좌번호가 복사되었습니다.</div>
+          </div>
+        </div>
+
+        <div class="page-back">
+          <div class="page-left-design">
+            <div class="left-quote">With Gratitude</div>
+            <div class="left-date">2026 . 04 . 19</div>
+          </div>
+        </div>
+      </div>
 
     </div>
 
@@ -241,4 +399,3 @@
 <script src="script.js"></script>
 </body>
 </html>
-
